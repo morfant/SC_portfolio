@@ -16,6 +16,7 @@ GradRect {
 	}
 
 	init {
+		"GradRect init()".postln;
 		clearColor = Color.new255(255, 255, 255, 100);
 		rect = Rect(pos.x, pos.y, size, size);
 		currentColorA = beginColor;
@@ -34,7 +35,9 @@ GradRect {
 			1, {innerColor = endColor; outterColor = beginColor},
 			2, {innerColor = beginColor; outterColor = endColor},
 			3, {innerColor = endColor; outterColor = beginColor},
-		)
+		);
+
+		this.sound;
 	}
 
 	draw {

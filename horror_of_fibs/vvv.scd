@@ -43,41 +43,120 @@ maxGroupNum.do{
 // Functions
 fillGR = {|g_idx, r_num, x, y, interval = 0.5|
 	// 중복 실행 및 목표 개수가 동일한 경우 방지
-	if (isFilling[g_idx].not and: (currentRectNum[g_idx] != r_num), {
+	if (isFilling[g_idx] == false and: (currentRectNum[g_idx] != r_num), {
 		isFilling[g_idx] = true; // 실행 중 플래그 설정
-		list_rect[g_idx].clear(); // 기존 사각형 초기화
+
 
 		direction = dirBase;
+		("dirBase: "++dirBase).postln;
 		pos = Point(x, y);
 
-		Routine({
-			r_num.do{|i|
-				var side = fib(i+1)[i] * 20;
 
-				// 사각형 객체 추가
-				list_rect[g_idx].add(
-					GradRect.new(pos, side, i % 4,
-						rectColors[g_idx][0],
-						rectColors[g_idx][1],
-						0, side * 0.1
-					)
-				);
+		if (currentRectNum[g_idx] < r_num, { // 늘어난다
+			"inc".postln;
 
-				// 다음 사각형 위치 업데이트
-				switch(direction,
-					0, { pos = pos + Point(side, 0); },  // 오른쪽
-					1, { pos = pos + Point(0, side); },  // 아래쪽
-					2, { pos = pos - Point(side, 0); }, // 왼쪽
-					3, { pos = pos - Point(0, side); }  // 위쪽
-				);
-				direction = (direction + 1) % 4; // 시계방향으로 90도 회전
+			Routine({
+				var diff = r_num - currentRectNum[g_idx];
+				("diff: "++diff).postln;
+				diff.do{|i|
+					var idx = currentRectNum[g_idx] + i;
+					var side = fib(idx + 1)[idx] * 20;
+					("idx: "++idx).postln;
+					("side: "++side).postln;
 
+					// 사각형 객체 추가
+					list_rect[g_idx].add(
+						("idx%4: "++(idx%4)).postln;
+						GradRect.new(pos, side, idx % 4,
+							rectColors[g_idx][0],
+							rectColors[g_idx][1],
+							0, side * 0.1
+						)
+					);
+
+
+
+					("list size: "++list_rect[g_idx].size).postln;
+					("list: "++list_rect[g_idx]).postln;
+					("direction: "++direction).postln;
+
+					// 다음 사각형 위치 업데이트
+					switch(direction,
+						0, { pos = pos + Point(side, 0); },  // 오른쪽
+						1, { pos = pos + Point(0, side); },  // 아래쪽
+						2, { pos = pos - Point(side, 0); }, // 왼쪽
+						3, { pos = pos - Point(0, side); }  // 위쪽
+					);
+					direction = (direction + 1) % 4; // 시계방향으로 90도 회전
+					("pos: "++pos).postln;
+					"-----------".postln;
+					interval.wait; // 대기 시간
+
+				};
+				// 실행 완료 후 플래그 해제 및 현재 개수 업데이트
+				currentRectNum[g_idx] = currentRectNum[g_idx] + diff;
+				isFilling[g_idx] = false;
+			}).play(AppClock)
+		});
+
+		if (currentRectNum[g_idx] > r_num, { // 줄어든다
+
+			"dec".postln;
+			("currentRectNum[g_idx]: "++currentRectNum[g_idx]).postln;
+			Routine({
+				var diff = (currentRectNum[g_idx] - r_num);
+				("diff: "++diff).postln;
+				diff.do{|i|
+					list_rect[g_idx].pop;
+					("list size: "++list_rect[g_idx].size).postln;
+					("list: "++list_rect[g_idx]).postln;
+					currentRectNum[g_idx] = currentRectNum[g_idx] - 1;
+
+				};
 				interval.wait; // 대기 시간
-			};
+			}).play(AppClock);
+
 			// 실행 완료 후 플래그 해제 및 현재 개수 업데이트
-			currentRectNum[g_idx] = r_num;
+			// currentRectNum[g_idx] = r_num;
 			isFilling[g_idx] = false;
-		}).play(AppClock);
+		});
+
+
+
+
+		// list_rect[g_idx].clear(); // 기존 사각형 초기화
+
+		// direction = dirBase;
+		// pos = Point(x, y);
+		//
+		// Routine({
+		// 	r_num.do{|i|
+		// 		var side = fib(i+1)[i] * 20;
+		//
+		// 		// 사각형 객체 추가
+		// 		list_rect[g_idx].add(
+		// 			GradRect.new(pos, side, i % 4,
+		// 				rectColors[g_idx][0],
+		// 				rectColors[g_idx][1],
+		// 				0, side * 0.1
+		// 			)
+		// 		);
+		//
+		//
+		// 		// 다음 사각형 위치 업데이트
+		// 		switch(direction,
+		// 			0, { pos = pos + Point(side, 0); },  // 오른쪽
+		// 			1, { pos = pos + Point(0, side); },  // 아래쪽
+		// 			2, { pos = pos - Point(side, 0); }, // 왼쪽
+		// 			3, { pos = pos - Point(0, side); }  // 위쪽
+		// 		);
+		// 		direction = (direction + 1) % 4; // 시계방향으로 90도 회전
+		//
+		// 		interval.wait; // 대기 시간
+		// 	};
+		// 실행 완료 후 플래그 해제 및 현재 개수 업데이트
+		// currentRectNum[g_idx] = r_num;
+		// isFilling[g_idx] = false;
 	});
 };
 
@@ -98,6 +177,7 @@ w.drawFunc = {
 		if (list_rect[i].size() > 0, {
 			list_rect[i].do{|item, idx|
 				item.draw;
+				// item.sound;
 			};
 		});
 
@@ -105,12 +185,17 @@ w.drawFunc = {
 
 
 
+
 	if (frameCount > 30, {
-		fillGR.(0, 2, 0, 0, 1.0);
+		// fillGR.(0, 6, 0, 0, 0.2);
 	});
 
 	if (frameCount > 60, {
-		fillGR.(1, 6, 200, 100, 0.2);
+		// fillGR.(0, 4, 200, 100, 0.2);
+	});
+
+	if (frameCount > 90, {
+		// fillGR.(1, 3, 200, 100, 0.2);
 	});
 
 
@@ -128,6 +213,17 @@ w.drawFunc = {
 };
 // w.refresh;
 { while { run } { w.refresh; 0.1.wait } }.fork(AppClock);
+
+
+fork{
+	1.do{
+		fillGR.(0, 6, 0, 0, 0.2);
+		4.0.wait;
+		fillGR.(0, 4, 200, 100, 0.5);
+		3.0.wait;
+		fillGR.(1, 3, 200, 100, 0.2);
+	}
+};
 
 
 //===================================================================
@@ -163,6 +259,7 @@ initVals = [1, 2];
 					// ("side: "++side).postln;
 					// ("i: "++i).postln;
 
+					// list_rect[0].size.postln;
 					// 사각형 객체 추가
 					list_rect[0].add(
 						GradRect.new(pos, side, i % 4,
