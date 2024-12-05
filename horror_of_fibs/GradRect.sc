@@ -2,7 +2,7 @@ GradRect {
 	var pos, size, angle, beginColor, endColor, gradStyle, lerpTime;
 	var rect, startPoint, endPoint, innerColor, outterColor;
 	var clearColor, currentColorA, currentColorB, routine;
-	var synthName = \unit_of_sound;
+	var synthName = \unit_of_sound_1;
 
 	*new {
 		arg
@@ -38,10 +38,6 @@ GradRect {
 			3, {innerColor = endColor; outterColor = beginColor},
 		);
 
-	}
-
-	kill {
-		this.sound;
 	}
 
 	draw {

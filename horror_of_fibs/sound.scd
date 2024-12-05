@@ -1,5 +1,5 @@
 (
-SynthDef(\unit_of_sound,
+SynthDef(\unit_of_sound_1,
 	{
 		arg freq = 0, amp = 0.5, dctime = 0.8, gate = 1;
 		var sig, env;

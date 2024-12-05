@@ -42,7 +42,7 @@ maxGroupNum.do{
 
 // Functions
 // group index, rect number, posx, posy, interval
-fillGR = {|g_idx, r_num, x, y, interval = 0.5, syn_name = \unit_of_sound|
+fillGR = {|g_idx, r_num, x, y, interval = 0.5, syn_name = \unit_of_sound_1|
 	// 중복 실행 및 목표 개수가 동일한 경우 방지
 	if (isFilling[g_idx] == false and: (currentRectNum[g_idx] != r_num), {
 		isFilling[g_idx] = true; // 실행 중 플래그 설정
@@ -111,7 +111,7 @@ fillGR = {|g_idx, r_num, x, y, interval = 0.5, syn_name = \unit_of_sound|
 				diff.do{|i|
 					var removed = nil;
 					removed = list_rect[g_idx].pop;
-					removed.kill();
+					removed.sound();
 					("list size: "++list_rect[g_idx].size).postln;
 					("list: "++list_rect[g_idx]).postln;
 					currentRectNum[g_idx] = currentRectNum[g_idx] - 1;
@@ -189,18 +189,6 @@ w.drawFunc = {
 
 
 
-	if (frameCount > 30, {
-		// fillGR.(0, 6, 0, 0, 0.2);
-	});
-
-	if (frameCount > 60, {
-		// fillGR.(0, 4, 200, 100, 0.2);
-	});
-
-	if (frameCount > 90, {
-		// fillGR.(1, 3, 200, 100, 0.2);
-	});
-
 
 
 
@@ -213,6 +201,7 @@ w.drawFunc = {
 
 
 	frameCount = frameCount + 1;
+	if (frameCount % 10 == 0) {Post << "FrameCount: " << frameCount << nl;}
 };
 // w.refresh;
 { while { run } { w.refresh; 0.1.wait } }.fork(AppClock);
@@ -220,11 +209,39 @@ w.drawFunc = {
 
 fork{
 	1.do{
-		fillGR.(0, 6, 0, 0, 0.2, \unit_of_sound);
+		"fork start".postln;
+		1.0.wait;
+		// fillGR.(0, 6, 0, 0, 0.2, \unit_of_sound);
+		// 4.0.wait;
+		// fillGR.(0, 4, 200, 100, 0.2);
+		// 3.0.wait;
+		// fillGR.(1, 3, 200, 100, 0.2, \unit_of_sound_2);
+
+
+		if (frameCount > 30, {
+			fillGR.(0, 6, 0, 0, 0.2, \unit_of_sound_1);
+		});
 		4.0.wait;
-		fillGR.(0, 4, 200, 100, 0.2);
+
+
+		if (frameCount > 60, {
+			fillGR.(0, 4, 200, 100, 0.2);
+		});
 		3.0.wait;
-		fillGR.(1, 3, 200, 100, 0.2, \unit_of_sound_2);
+
+
+		if (frameCount > 90, {
+			fillGR.(1, 3, 200, 100, 0.2, \unit_of_sound_2);
+		});
+		3.0.wait;
+
+		if (frameCount > 110, {
+			fillGR.(2, 10, -200, -100, 0.1, \unit_of_sound_1);
+			fillGR.(3, 4, -200, 0, 0.25, \unit_of_sound_2);
+		});
+		6.0.wait;
+
+
 	}
 };
 
