@@ -1,5 +1,5 @@
 (
-SynthDef(\unif_of_sound,
+SynthDef(\unit_of_sound,
 	{
 		arg freq = 0, amp = 0.5, dctime = 0.8, gate = 1;
 		var sig, env;
@@ -8,11 +8,19 @@ SynthDef(\unif_of_sound,
 		sig = Pan2.ar(sig * env, 0, amp);
 		Out.ar(0, sig);
 	}).add;
+
+SynthDef(\unit_of_sound_2,
+	{
+		arg freq = 0, amp = 0.5, dctime = 0.8, gate = 1;
+		var sig, env;
+		env = EnvGen.kr(Env.perc(0.1), gate, doneAction: 2);
+		sig = Decay2.ar(Impulse.ar(freq), 0.005, dctime) * SinOsc.ar(429).cubed;
+		sig = Pan2.ar(sig * env, 0, amp);
+		Out.ar(0, sig);
+	}).add;
 )
 
-a = Synth(\unif_of_sound)
-
-
+a = Synth(\unit_of_sound_2)
 
 
 (// gate 아규먼트 자리에 trigger rate 아규먼트를 이용하는 예

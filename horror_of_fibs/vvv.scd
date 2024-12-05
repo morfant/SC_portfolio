@@ -41,7 +41,8 @@ maxGroupNum.do{
 
 
 // Functions
-fillGR = {|g_idx, r_num, x, y, interval = 0.5|
+// group index, rect number, posx, posy, interval
+fillGR = {|g_idx, r_num, x, y, interval = 0.5, syn_name = \unit_of_sound|
 	// 중복 실행 및 목표 개수가 동일한 경우 방지
 	if (isFilling[g_idx] == false and: (currentRectNum[g_idx] != r_num), {
 		isFilling[g_idx] = true; // 실행 중 플래그 설정
@@ -58,6 +59,7 @@ fillGR = {|g_idx, r_num, x, y, interval = 0.5|
 			Routine({
 				var diff = r_num - currentRectNum[g_idx];
 				("diff: "++diff).postln;
+				"===============".postln;
 				diff.do{|i|
 					var idx = currentRectNum[g_idx] + i;
 					var side = fib(idx + 1)[idx] * 20;
@@ -71,9 +73,9 @@ fillGR = {|g_idx, r_num, x, y, interval = 0.5|
 							rectColors[g_idx][0],
 							rectColors[g_idx][1],
 							0, side * 0.1
-						)
-					);
+						).setSound(syn_name).sound();
 
+					);
 
 
 					("list size: "++list_rect[g_idx].size).postln;
@@ -107,13 +109,14 @@ fillGR = {|g_idx, r_num, x, y, interval = 0.5|
 				var diff = (currentRectNum[g_idx] - r_num);
 				("diff: "++diff).postln;
 				diff.do{|i|
-					list_rect[g_idx].pop;
+					var removed = nil;
+					removed = list_rect[g_idx].pop;
+					removed.kill();
 					("list size: "++list_rect[g_idx].size).postln;
 					("list: "++list_rect[g_idx]).postln;
 					currentRectNum[g_idx] = currentRectNum[g_idx] - 1;
-
+					interval.wait; // 대기 시간
 				};
-				interval.wait; // 대기 시간
 			}).play(AppClock);
 
 			// 실행 완료 후 플래그 해제 및 현재 개수 업데이트
@@ -217,11 +220,11 @@ w.drawFunc = {
 
 fork{
 	1.do{
-		fillGR.(0, 6, 0, 0, 0.2);
+		fillGR.(0, 6, 0, 0, 0.2, \unit_of_sound);
 		4.0.wait;
-		fillGR.(0, 4, 200, 100, 0.5);
+		fillGR.(0, 4, 200, 100, 0.2);
 		3.0.wait;
-		fillGR.(1, 3, 200, 100, 0.2);
+		fillGR.(1, 3, 200, 100, 0.2, \unit_of_sound_2);
 	}
 };
 

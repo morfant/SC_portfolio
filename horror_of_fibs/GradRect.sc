@@ -2,6 +2,7 @@ GradRect {
 	var pos, size, angle, beginColor, endColor, gradStyle, lerpTime;
 	var rect, startPoint, endPoint, innerColor, outterColor;
 	var clearColor, currentColorA, currentColorB, routine;
+	var synthName = \unit_of_sound;
 
 	*new {
 		arg
@@ -37,6 +38,9 @@ GradRect {
 			3, {innerColor = endColor; outterColor = beginColor},
 		);
 
+	}
+
+	kill {
 		this.sound;
 	}
 
@@ -71,6 +75,7 @@ GradRect {
 		// Pen.rotate(angle, rect.bounds.center.x, rect.bounds.center.y);
 	}
 
+	// make transparently
 	clear {
 		this.stopClear;
 
@@ -101,8 +106,14 @@ GradRect {
         }
     }
 
+	setSound {|syn_name|
+		synthName = syn_name;
+	}
+
 	sound {
-		Synth(\unif_of_sound);
+		// Synth(\unif_of_sound);
+
+		Synth(synthName);
 	}
 
 }
