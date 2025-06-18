@@ -7,6 +7,10 @@
 ~buf_1.numFrames
 ~buf_1.play
 
+// TODO
+// 공마다 다른 buffer를 할당할 수 있게
+
+
 (
 
 SynthDef(\bufReader, {
